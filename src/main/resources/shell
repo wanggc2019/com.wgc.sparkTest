@@ -1,0 +1,41 @@
+1、com.wgc.sparkHiveExample.JavaSparkHiveExample
+注意事项：
+1）需要添加config：
+.config("hive.metastore.uris", "thrift://bigdata014230:9083")
+.config("hive.metastore.uris", "thrift://bigdata014231:9083")
+
+2）需要把集群配置文件放到resource下
+hive-site.xml
+hdfs-site.xml
+core-site.xml
+yarn-site.xml
+
+3）打jar包的pom.xml
+<!--注意，此处必须是main()方法对应类的完整路径  -->
+<mainClass>com.wgc.sparkExample.JavaWordCount</mainClass>
+要注意修改为对应的java主类的名称
+
+3)集群执行脚本
+su - eda
+spark2-submit \
+--master yarn \
+--deploy-mode cluster \
+--conf spark.driver.memory=2g \
+--executor-cores 4 \
+--class com.wgc.sparkHiveExample.JavaSparkHiveExample \
+com.wgc.sparkTest-1.0-SNAPSHOT.jar
+
+4)在yarn上查看任务明细日志
+在Executor界面查看stdout日志，可以日志和sql执行结果。
+
+2、map和flatmap的区别
+map: 对RDD每个元素转换
+flatMap: 对RDD每个元素转换, 然后再扁平化（即将所有对象合并为一个对象）
+例如：
+data 有两行数据：
+a,b,c
+1,2,3
+scala>data.map(line1 => line1.split(",")).collect()
+res11: Array[Array[String]] = Array(Array(a, b, c), Array(1, 2, 3))
+scala>data.flatMap(line1 => line1.split(",")).collect()
+res13: Array[String] = Array(a, b, c, 1, 2, 3)
